@@ -322,7 +322,7 @@ class Game():
             self.enemies = self.set_level(player_ship)
             self.num_level_enemies = len(self.enemies)
             self.level += 1
-            if self.num_level_enemies == 0:
+            if self.num_level_enemies == 0: # don't understand this logic
                 self.game_over_screen()
 
     def init(self):
@@ -345,19 +345,7 @@ class Game():
                 self.pause = False
             else:
                 self.pause = True
-        '''
-        keys = pygame.key.get_pressed()
-        print(dir(pygame.KEYDOWN))
-        if keys[pygame.K_p]:
-            if current_pause - old_pause >= 20:
-                print(f'In Check Pause actually changing pause state: current_pause:{current_pause} old_pause: {old_pause}')
-                if not self.pause:
-                    self.pause = True
-                else:
-                    self.pause = False
-                old_pause = current_pause
-        return old_pause
-        '''
+   
 
     def set_level(self, player_ship):
         enemy_list = []
@@ -532,7 +520,7 @@ class Game():
                 boss_current_movement += 1
                 cur += 1
 
-                self.update_level(player_ship)
+                self.update_level(player_ship) # moves to the next level when all enemies die, updates enemy list 
                 shoot_flag = random.randint(0, 9)
 
                 if player_ship.health <= 0:
