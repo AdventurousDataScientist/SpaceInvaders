@@ -4,6 +4,11 @@ import math
 from pygame import mixer
 import Projectile
 from Projectile import Basic_Enemy_Projectile
+from animations import EXPLOSION_ANIMATION, EXPLOSION_ANIMATION_COUNTER, EXPLOSION_ANIMATION_FRAME_REPS
+from Animation import Animation
+
+
+explosion_animation = Animation(EXPLOSION_ANIMATION, EXPLOSION_ANIMATION_COUNTER, EXPLOSION_ANIMATION_FRAME_REPS)
 
 def vertical_distance_delay(pixel_delay,y1,y2):
     dist = math.sqrt((y2 - y1)**2)  
@@ -143,10 +148,14 @@ class Enemy(object):
         win.blit(self.image,(self.x,self.y))
         pygame.draw.rect(win,(255,0,0),self.hitbox,2)
     
-    def hit(self,player_ship):
+    
+    def hit(self, player_ship, win):
         self.health -= 1
         if self.health <= 0:
             player_ship.score += self.score
+            explosion_animation.play = True
+            explosion_animation.play_animation(self, win)
+            # play explosion animation
             return True
         return False
     

@@ -161,6 +161,9 @@ class Game():
             if 'Boss' in enemy.type:
                 draw_text('Wave: ' + str(enemy.wave), 30, (255, 100, 10), 100, 200)
                 draw_text('Health: ' + str(enemy.current_health), 30, (255, 100, 10), 100, 250)
+        
+    
+
         index = 0
         for bullet in player_ship.bullets:
             text_x = 100
@@ -274,7 +277,8 @@ class Game():
     def player_ship_bullet_updates(self, player_ship, current_frame):
         explosion_sound = mixer.Sound('src/Entities/Enemy/sounds/explosion.wav')
         for bullet in player_ship.bullets:
-            if bullet.y < 0 or bullet.y + bullet.hitbox[3] > screen_height:
+            # if off the screen remove bullet
+            if bullet.y < 0 or bullet.y + bullet.hitbox[3] > screen_height: 
                 removal_index = player_ship.bullets.index(bullet)
                 player_ship.bullets.pop(removal_index)
                 continue
@@ -287,24 +291,31 @@ class Game():
                     overlap = self.overlap_check(bullet, enemy)
                     if overlap:  # possible issue here
                         if enemy.type == 'Deflector_Enemy':
-                            enemy.dead = enemy.hit(player_ship, bullet, current_frame)
+                            enemy.dead = enemy.hit(player_ship, bullet, current_frame) # update player score
                             if enemy.dead == True:
                                 removal_index = player_ship.bullets.index(bullet)
                                 player_ship.bullets.pop(removal_index)
-
+                                
                         if 'Boss' in enemy.type:
                             explosion_sound.play()
                             enemy.dead = enemy.hit(player_ship, bullet)
                             removal_index = player_ship.bullets.index(bullet)
                             player_ship.bullets.pop(removal_index)
+                            
                         else:
                             explosion_sound.play()
                             removal_index = player_ship.bullets.index(bullet)
                             player_ship.bullets.pop(removal_index)
-                            enemy.dead = enemy.hit(player_ship)
-
+                            enemy.dead = enemy.hit(player_ship, win)
+                            # play explosion animation
                         if enemy.dead:
+                            print('Enemy Dead')
                             self.num_level_enemies -= 1
+                            # set flag showing explosion must happen
+                            bullet.explode = True
+                            enemy_removal_index = self.enemies.index(enemy)
+                            self.enemies.pop(enemy_removal_index)
+                            
 
     def overlap_check(self, sprite1, sprite2):
         top_in = sprite1.hitbox[1] > sprite2.hitbox[1] and sprite1.hitbox[1] < sprite2.hitbox[1] + sprite2.hitbox[3]

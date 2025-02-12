@@ -1,5 +1,8 @@
 import pygame
 
+explosion_animation = [pygame.image.load('images/explode0.png'), pygame.image.load('images/explode1.png'),
+              pygame.image.load('images/explode2.png'), pygame.image.load('images/explode3.png')]
+
 class Projectile(object):
     bullet_types = ['6','5','7','4','8']
     images = ['']
@@ -19,12 +22,22 @@ class Projectile(object):
         self.dead = False
         self.damage = damage
         self.reversed = False
-        
+        self.explode = False
+        self.explosion_counter = 0
+
         if self.type != 'player':
             self.set_direction(image)
             
     def draw(self,win):
-        win.blit(self.image,(self.x,self.y))
+        if self.explode:
+            print(f'Playing Bullet explosion animation')
+            self.explosion_counter += 1
+            win.blit(explosion_animation[self.explosion_counter//5], (self.x, self.y))
+            if self.explosion_counter >= 20:
+                self.explode = False
+                self.explosion_counter = 0
+        else:
+            win.blit(self.image,(self.x,self.y))
 
     def set_direction(self,image_name):
         if self.type == '4':
